@@ -1,35 +1,37 @@
-🧩 Search Insert Position – Notes
+🧩 Search Insert Position (as Lower Bound) – Notes
 
 Problem:
-Given a sorted array and a target, return the index if the target is found.
-If not found, return the index where it should be inserted to maintain order.
+Given a sorted array and a target, find the index if the target exists.
+If not, return the index where it should be inserted to keep the array sorted.
 
 Key Points:
 
-Works on sorted arrays only.
+This is essentially the lower bound problem — find the first index i where arr[i] >= target.
 
-Use binary search to find the correct position efficiently.
+If the target exists → that index is its position.
 
-If nums[mid] == target → return mid.
+If it doesn’t exist → that index is where it should be inserted.
 
-If nums[mid] < target → move right (low = mid + 1).
+If all elements are smaller → return n (end position).
 
-Else → store mid as potential insert position and move left (high = mid - 1).
-
-Final answer ans will be the correct insert position.
+Works in O(log n) using binary search.
 
 Time Complexity: O(log n)
 Space Complexity: O(1)
 
 int searchInsert(vector<int>& nums, int target) {
-    int low = 0, high = nums.size() - 1, ans = nums.size();
+    int low = 0, high = nums.size() - 1;
+    int ans = nums.size();
+
     while (low <= high) {
         int mid = (low + high) / 2;
-        if (nums[mid] == target) return mid;
-        else if (target > nums[mid]) low = mid + 1;
-        else {
+
+        // same as lower bound condition
+        if (nums[mid] >= target) {
             ans = mid;
-            high = mid - 1;
+            high = mid - 1;  // look for smaller index
+        } else {
+            low = mid + 1;   // look on the right
         }
     }
     return ans;
