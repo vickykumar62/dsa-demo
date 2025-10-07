@@ -1,0 +1,33 @@
+🧩 Lower Bound – Notes
+
+Problem:
+Find the first index in a sorted array where arr[ind] >= target.
+If no such index exists, return n (array size).
+
+Key Points:
+
+Works only on sorted arrays.
+
+Use binary search to find the first position where value ≥ target.
+
+If arr[mid] >= target, store mid as potential answer and move left (high = mid - 1).
+
+Else, move right (low = mid + 1).
+
+Final answer is the smallest index meeting the condition.
+
+Time Complexity: O(log n)
+Space Complexity: O(1)
+
+int lowerBound(vector<int>& arr, int target) {
+    int low = 0, high = arr.size() - 1, ans = arr.size();
+    while (low <= high) {
+        int mid = (low + high) / 2;
+        if (arr[mid] >= target) {
+            ans = mid;
+            high = mid - 1;
+        } 
+        else low = mid + 1;
+    }
+    return ans;
+}
