@@ -1,0 +1,37 @@
+🧩 Search Insert Position – Notes
+
+Problem:
+Given a sorted array and a target, return the index if the target is found.
+If not found, return the index where it should be inserted to maintain order.
+
+Key Points:
+
+Works on sorted arrays only.
+
+Use binary search to find the correct position efficiently.
+
+If nums[mid] == target → return mid.
+
+If nums[mid] < target → move right (low = mid + 1).
+
+Else → store mid as potential insert position and move left (high = mid - 1).
+
+Final answer ans will be the correct insert position.
+
+Time Complexity: O(log n)
+Space Complexity: O(1)
+
+int searchInsert(vector<int>& nums, int target) {
+    int low = 0, high = nums.size() - 1, ans = nums.size();
+    while (low <= high) {
+        int mid = (low + high) / 2;
+        if (nums[mid] == target) return mid;
+        else if (target > nums[mid]) low = mid + 1;
+        else {
+            ans = mid;
+            high = mid - 1;
+        }
+    }
+    return ans;
+}
+
