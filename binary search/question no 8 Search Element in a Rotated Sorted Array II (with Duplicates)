@@ -1,0 +1,70 @@
+Problem:
+Given a rotated sorted array that may contain duplicate elements, determine if a given target exists in the array.
+Return true if the target is found, otherwise false.
+
+Key Points:
+
+Similar to the normal rotated array search, but here duplicates can exist.
+
+Duplicates make it hard to decide which half is sorted, because both sides can appear identical.
+
+To handle this, when nums[low] == nums[mid] == nums[high], we shrink the search space by moving both pointers inward (low++, high--).
+
+Otherwise, use the same logic as before:
+
+If left half is sorted (nums[low] <= nums[mid]), check if the target lies in that range.
+
+Else, the right half is sorted; check the target range there.
+
+Continue until the target is found or the search space becomes empty.
+
+Time Complexity:
+
+Worst Case: O(n) (when many duplicates exist, e.g., [1,1,1,1,1])
+
+Average Case: O(log n)
+
+Space Complexity: O(1)
+
+remember : Distinct elements → always one sorted half.
+
+          Duplicates → uncertain case → shrink boundaries (low++, high--).
+
+          Modified binary search still efficient for most cases, but may degrade to linear search in worst cases.
+
+class Solution {
+public:
+    bool search(vector<int>& nums, int target) {
+        int low = 0, high = nums.size() - 1;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+
+            if (nums[mid] == target) return true;
+
+            // Handle duplicates: can't determine sorted half
+            if (nums[low] == nums[mid] && nums[mid] == nums[high]) {
+                low++;
+                high--;
+                continue;
+            }
+
+            // Left half is sorted
+            if (nums[low] <= nums[mid]) {
+                if (target >= nums[low] && target < nums[mid])
+                    high = mid - 1;
+                else
+                    low = mid + 1;
+            }
+            // Right half is sorted
+            else {
+                if (target > nums[mid] && target <= nums[high])
+                    low = mid + 1;
+                else
+                    high = mid - 1;
+            }
+        }
+
+        return false;
+    }
+};
