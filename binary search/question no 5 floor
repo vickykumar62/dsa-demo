@@ -1,0 +1,37 @@
+🧩 Floor Value – Notes
+
+Problem:
+Find the floor of a target in a sorted array — the largest element ≤ target.
+If no such element exists (i.e., all elements are greater than target), return -1.
+
+Key Points:
+
+Works on sorted arrays.
+
+Use binary search to find the greatest element ≤ target.
+
+If arr[mid] <= target, store arr[mid] as potential answer and move right (low = mid + 1) to find a possibly larger valid value.
+
+Else move left (high = mid - 1).
+
+The final ans holds the floor value.
+
+Time Complexity: O(log n)
+Space Complexity: O(1)
+
+int findFloor(vector<int>& nums, int target) { 
+    int low = 0, high = nums.size() - 1; 
+    int ans = -1;
+
+    while (low <= high) {
+        int mid = (low + high) / 2;
+
+        if (nums[mid] <= target) {
+            ans = nums[mid];       // possible floor
+            low = mid + 1;         // look for a larger valid value on the right
+        } else {
+            high = mid - 1;        // look on the left
+        }
+    }
+    return ans;
+}
