@@ -1,0 +1,37 @@
+🧩 Ceiling Value – Notes
+
+Problem:
+Find the ceiling of a target in a sorted array — the smallest element ≥ target.
+If no such element exists (i.e., all elements are smaller than target), return -1.
+
+Key Points:
+
+Works only on sorted arrays.
+
+Use binary search to find the smallest element ≥ target.
+
+If arr[mid] >= target, store arr[mid] as potential answer and move left (high = mid - 1) to find a smaller valid value.
+
+Else, move right (low = mid + 1).
+
+The final ans holds the ceiling value.
+
+Time Complexity: O(log n)
+Space Complexity: O(1)
+
+int findCeil(vector<int>& nums, int target) {
+    int low = 0, high = nums.size() - 1;
+    int ans = -1;
+
+    while (low <= high) {
+        int mid = (low + high) / 2;
+
+        if (nums[mid] >= target) {
+            ans = nums[mid];       // possible ceiling
+            high = mid - 1;        // look for smaller valid value on the left
+        } else {
+            low = mid + 1;         // look on the right
+        }
+    }
+    return ans;
+}
