@@ -1,0 +1,64 @@
+🧩 Search Element in a Rotated Sorted Array – Notes
+
+Problem:
+Given a rotated sorted array (with distinct elements) and a target value, find the index of the target.
+If the target is not found, return -1.
+
+Key Points:
+
+The array is rotated, but one half (left or right) will always remain sorted.
+
+Identify the sorted half using the condition:
+
+If nums[low] <= nums[mid], then left half is sorted.
+
+Else, right half is sorted.
+
+Once the sorted half is known:
+
+Check if the target lies within that half.
+
+If yes → search within it.
+
+Otherwise → search in the other half.
+
+Continue until low > high.
+
+Time Complexity: O(log n)
+Space Complexity: O(1)
+
+remember : In a rotated sorted array, at least one side of mid is always sorted.
+
+          Use that property to decide which half to discard in each iteration.
+
+          This modified binary search maintains O(log n) efficiency even after rotation.
+
+class Solution {
+public:
+    int search(vector<int>& nums, int target) {
+        int low = 0, high = nums.size() - 1;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+
+            if (nums[mid] == target) return mid;
+
+            // Left half is sorted
+            if (nums[low] <= nums[mid]) {
+                if (target >= nums[low] && target <= nums[mid])
+                    high = mid - 1; // target lies in left half
+                else
+                    low = mid + 1;  // target lies in right half
+            }
+            // Right half is sorted
+            else {
+                if (target >= nums[mid] && target <= nums[high])
+                    low = mid + 1;  // target lies in right half
+                else
+                    high = mid - 1; // target lies in left half
+            }
+        }
+
+        return -1;
+    }
+};
