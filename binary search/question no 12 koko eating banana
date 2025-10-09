@@ -1,0 +1,105 @@
+🍌 Notes – Koko Eating Bananas (Binary Search on Answer)
+
+🧩 Problem Statement:
+Koko loves bananas. She has piles of bananas and must finish eating them within h hours.
+Each hour, she can choose a speed k (bananas per hour) and eat that many from one pile.
+If the pile has fewer than k, she finishes that pile and waits for the next hour.
+Find the minimum integer speed k such that Koko can finish all bananas in h hours.
+
+⚙️ Core Idea — Binary Search on the Answer
+
+Instead of searching through the array, we’re searching for the minimum valid value of k (speed) —
+👉 this is called “Binary Search on Answer”.
+
+We know:
+
+Minimum speed = 1 banana/hour.
+
+Maximum speed = max(piles) bananas/hour (fastest possible).
+
+We binary search within this range of possible answers.
+
+🔁 Steps:
+
+Define the search space: low = 1, high = max(piles).
+
+For a mid-speed mid, calculate total hours needed using:
+
+total_hours = Σ ceil(piles[i] / mid)
+
+
+If total_hours <= h,
+→ current speed works, try slower speed → high = mid - 1.
+
+If total_hours > h,
+→ too slow, try faster speed → low = mid + 1.
+
+The smallest valid speed is the answer.
+
+💡 Why It Works:
+
+As speed increases, total time decreases monotonically.
+
+That monotonic relationship allows binary search to find the threshold point efficiently.
+
+🧠 Key Takeaways (for future problems):
+
+Binary search is not just for arrays — it works whenever the solution space is monotonic (either increasing or decreasing).
+
+Always define a search space for possible answers instead of searching through data directly.
+
+Be careful with:
+
+Integer overflow → use long long.
+
+Ceil division → use (double)piles[i] / speed.
+
+Use helper functions for clarity (like hours() here).
+
+Return the smallest value that satisfies the condition.
+
+⏱ Complexity:
+
+Time: O(n × log(max(piles)))
+
+Space: O(1)
+
+🪄 Remember:
+
+Whenever a problem asks for “minimum/maximum value that satisfies a condition”,
+it’s a strong hint for Binary Search on Answer.
+
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+    // Function to calculate total hours if Koko eats x bananas per hour
+    long long hours(vector<int>& piles, long long x) {
+        long long total_hour = 0;
+        for (int bananas : piles) {
+            total_hour += ceil((double)bananas / x); // safe division
+        }
+        return total_hour;
+    }
+
+    int minEatingSpeed(vector<int>& piles, int h) {
+        long long low = 1;
+        long long high = *max_element(piles.begin(), piles.end());
+        long long ans = high;
+
+        while (low <= high) {
+            long long mid = low + (high - low) / 2; // prevent overflow
+            long long time = hours(piles, mid);
+
+            if (time <= h) {
+                ans = mid;
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+
+        return (int)ans;
+    }
+};
