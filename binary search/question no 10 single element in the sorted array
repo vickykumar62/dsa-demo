@@ -1,0 +1,69 @@
+Problem – Single Element in a Sorted Array
+
+You are given a sorted array where every element appears exactly twice, except one element which appears only once.
+Find that single non-duplicate element in O(log n) time and O(1) space.
+
+🧠 Key Points / Notes
+
+The array is sorted, so identical elements appear in pairs — either at (even, odd) or (odd, even) indices.
+
+Before the single element → pairs start at even indices (0, 2, 4, …).
+
+After the single element → the pairing pattern shifts and starts at odd indices (1, 3, 5, …).
+
+Use binary search with this parity observation:
+
+If mid is even and nums[mid] == nums[mid + 1], the single element is on the right.
+
+If mid is odd and nums[mid] == nums[mid - 1], the single element is on the right.
+
+Otherwise, it lies on the left.
+
+Handle edge cases:
+
+If the first or last element is not equal to its neighbor, it’s the single element.
+
+⚙️ Complexity
+
+Time: O(log n)
+
+Space: O(1)
+
+remember :
+
+The single element lies at the point where the pairing pattern breaks —
+before it, pairs start at even indices; after it, pairs start at odd indices.
+
+class Solution {
+public:
+    int singleNonDuplicate(vector<int>& nums) {
+        int n = nums.size();
+
+        // Handle edge cases
+        if (n == 1) return nums[0];
+        if (nums[0] != nums[1]) return nums[0];
+        if (nums[n - 1] != nums[n - 2]) return nums[n - 1];
+
+        int low = 1, high = n - 2; // avoid boundary issues
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+
+            // If mid is the single element
+            if (nums[mid] != nums[mid - 1] && nums[mid] != nums[mid + 1])
+                return nums[mid];
+
+            // Decide which side to search
+            bool isEvenPairIndex = (mid % 2 == 0);
+
+            if ((isEvenPairIndex && nums[mid] == nums[mid + 1]) ||
+                (!isEvenPairIndex && nums[mid] == nums[mid - 1])) {
+                low = mid + 1;  // single element is in right half
+            } else {
+                high = mid - 1; // single element is in left half
+            }
+        }
+
+        return -1; // should never reach here
+    }
+};
