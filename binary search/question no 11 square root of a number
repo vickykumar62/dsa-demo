@@ -1,0 +1,57 @@
+🧮 Notes – Finding the Square Root (Floor of √n)
+
+Problem:
+Given a positive integer n, find the floor of its square root — i.e., the greatest integer x such that x² ≤ n.
+
+Key Idea:
+Use binary search to efficiently find the integer square root by checking midpoints between 1 and n.
+
+Steps:
+
+Initialize search range → low = 1, high = n.
+
+Compute mid = (low + high) / 2 and val = mid * mid.
+
+If val ≤ n, move right (low = mid + 1) — because mid could be a valid root, but there might be a larger one.
+
+If val > n, move left (high = mid - 1).
+
+At the end, high will point to the floor of √n.
+
+Why it works:
+We’re searching for the largest integer whose square doesn’t exceed n, and binary search efficiently narrows that down.
+
+Complexity:
+
+⏱ Time: O(log n)
+
+💾 Space: O(1)
+
+⚙️ Remember for Future Problems
+
+You can apply this same Binary Search on Answer technique when:
+
+The answer lies in a numeric range, not an array index.
+
+There’s a monotonic relationship (increasing or decreasing behavior).
+
+You can define a check function that tells whether a candidate answer works.
+
+int floorSqrt(int n) {
+    int low = 1, high = n, ans = 0;
+
+    while (low <= high) {
+        long long mid = low + (high - low) / 2;
+        long long sq = mid * mid;
+
+        if (sq == n)
+            return mid; // perfect square
+        else if (sq < n) {
+            ans = mid;   // store possible answer
+            low = mid + 1;
+        } else
+            high = mid - 1;
+    }
+
+    return ans; // floor value of sqrt(n)
+}
