@@ -1,0 +1,62 @@
+🧩 Problem – Find Minimum in Rotated Sorted Array
+
+You are given a sorted array that has been rotated at some pivot.
+Your task is to find the minimum element in the array.
+All elements are distinct.
+
+🧠 Key Points / Notes
+
+The array is partly sorted and partly rotated.
+
+The minimum element lies at the rotation point.
+
+If the array is already sorted (nums[low] <= nums[high]), then nums[low] is the minimum.
+
+In every iteration:
+
+Left half sorted → nums[low] is the smallest in that half → move to right half (low = mid + 1).
+
+Right half sorted → nums[mid] is the smallest in that half → move to left half (high = mid - 1).
+
+Keep updating the answer with the smallest value seen so far.
+
+⚙️ Time & Space Complexity
+
+Time: O(log n)
+
+Space: O(1)
+
+remember :
+
+In any sorted part of the rotated array, the first element (nums[low]) is the smallest of that section.
+The real minimum always lies in the unsorted half, which we narrow down using binary search.
+
+class Solution {
+public:
+    int findMin(vector<int>& nums) {
+        int low = 0, high = nums.size() - 1;
+
+        // If array is not rotated
+        if (nums[low] <= nums[high]) 
+            return nums[low];
+
+        int ans = INT_MAX;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+
+            // Left half is sorted
+            if (nums[low] <= nums[mid]) {
+                ans = min(ans, nums[low]);  // minimum in sorted left half
+                low = mid + 1;              // move right
+            } 
+            // Right half is sorted
+            else {
+                ans = min(ans, nums[mid]);  // minimum in sorted right half
+                high = mid - 1;             // move left
+            }
+        }
+
+        return ans;
+    }
+};
