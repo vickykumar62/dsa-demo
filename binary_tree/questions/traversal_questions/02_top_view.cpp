@@ -1,12 +1,12 @@
 class Solution {
 public:
-    vector<int> topView(Node *root) {
+    vector<int> topView(TreeNode *root) {
 
         // vertical level -> node value
         map<int, int> mpp;
 
         // queue stores: node and its vertical level
-        queue<pair<Node*, int>> que;
+        queue<pair<TreeNode*, int>> que;
         que.push({root, 0});
 
         while (!que.empty()) {
@@ -17,7 +17,7 @@ public:
 
             // store first node seen at this vertical level
             if (mpp.find(level) == mpp.end()) {
-                mpp[level] = curr->data;
+                mpp[level] = curr->val;
             }
 
             if (curr->left)
