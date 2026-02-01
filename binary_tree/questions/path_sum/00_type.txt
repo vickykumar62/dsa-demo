@@ -1,0 +1,7 @@
+Pattern recognition
+
+1. Add value while going down
+2. Check condition at leaf
+3. Explore left and right
+4. Remove value while coming back
+
