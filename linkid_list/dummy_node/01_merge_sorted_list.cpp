@@ -34,21 +34,9 @@ public:
             temp = temp->next;
         }
 
-        // If list1 still has nodes left,
-        // attach remaining part directly
-        while(list1){
-            temp->next = list1;
-            temp = temp->next;
-            list1 = list1->next;
-        }
+        // Attach remaining list directly because they will be sorted 
+        temp->next = (list1) ? list1 : list2;
 
-        // If list2 still has nodes left,
-        // attach remaining part directly
-        while(list2){
-            temp->next = list2;
-            temp = temp->next;
-            list2 = list2->next;
-        }
 
         // Return head of merged list
         // (skip dummy node)
