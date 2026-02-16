@@ -1,0 +1,94 @@
+class Solution {
+public:
+
+    // ================================
+    // Function to find middle for Merge Sort
+    // Returns node BEFORE actual middle
+    // So that we can split the list safely
+    // ================================
+    ListNode* findMid(ListNode* head) {
+
+        // slow moves 1 step
+        ListNode* slow = head;
+
+        // fast starts from next node
+        // This ensures slow stops at node BEFORE middle
+        ListNode* fast = head->next;
+
+        // Move fast by 2 and slow by 1
+        while(fast && fast->next){
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+
+        // slow is now at node before middle
+        return slow;
+    }
+
+
+    // ================================
+    // Merge two sorted linked lists
+    // ================================
+    ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
+        
+        // Dummy node helps avoid edge case handling
+        ListNode* dummy = new ListNode(-1);
+
+        // temp builds the new merged list
+        ListNode* temp = dummy;
+
+        // Compare nodes and attach smaller one
+        while(list1 && list2){
+            
+            if(list1->val < list2->val){
+                temp->next = list1;
+                list1 = list1->next;
+            }
+            else{
+                temp->next = list2;
+                list2 = list2->next;
+            }
+
+            // Move temp forward
+            temp = temp->next;
+        }
+
+        // Attach remaining nodes
+        // Only one of them will be non-null
+        temp->next = (list1) ? list1 : list2;
+
+        // Return head (skip dummy node)
+        return dummy->next;
+    }
+
+
+    // ================================
+    // Main Merge Sort Function
+    // ================================
+    ListNode* sortList(ListNode* head) {
+
+        // Base case:
+        // If list is empty or has 1 node,
+        // it is already sorted
+        if(head == nullptr || head->next == nullptr)
+            return head;
+
+        // Step 1: Split the list into two halves
+        ListNode* mid = findMid(head);
+
+        // Second half starts from next of mid
+        ListNode* secondHead = mid->next;
+
+        // Break the list into two separate lists
+        mid->next = nullptr;
+
+        // Step 2: Recursively sort both halves
+        ListNode* left = sortList(head);
+        ListNode* right = sortList(secondHead);
+
+        // Step 3: Merge sorted halves
+        return mergeTwoLists(left, right);
+    }
+};
+
+
