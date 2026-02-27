@@ -1,7 +1,7 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-class MinHeap {
+class MaxHeap {
 private:
     int* arr;
     int size;
@@ -9,13 +9,13 @@ private:
 
 public:
     // Constructor
-    MinHeap(int n) {
+    MaxHeap(int n) {
         arr = new int[n];
         size = 0;
         total_size = n;
     }
 
-    // Insert (Heapify Up)
+    // Insert element
     void insert(int x) {
         if (size == total_size) {
             cout << "Heap is full, cannot insert\n";
@@ -23,31 +23,31 @@ public:
         }
 
         arr[size] = x;
-        int i = size;
+        int index = size;
         size++;
 
-        // Move upward
-        while (i > 0 && arr[(i - 1) / 2] > arr[i]) {
-            swap(arr[(i - 1) / 2], arr[i]);
-            i = (i - 1) / 2;
+        // Move upward (Heapify Up)
+        while (index > 0 && arr[(index - 1) / 2] < arr[index]) {
+            swap(arr[(index - 1) / 2], arr[index]);
+            index = (index - 1) / 2;
         }
     }
 
     // Heapify Down
     void heapify(int parent) {
-        int smallest = parent;
+        int largest = parent;
         int left = 2 * parent + 1;
         int right = 2 * parent + 2;
 
-        if (left < size && arr[left] < arr[smallest])
-            smallest = left;
+        if (left < size && arr[left] > arr[largest])
+            largest = left;
 
-        if (right < size && arr[right] < arr[smallest])
-            smallest = right;
+        if (right < size && arr[right] > arr[largest])
+            largest = right;
 
-        if (parent != smallest) {
-            swap(arr[parent], arr[smallest]);
-            heapify(smallest);
+        if (largest != parent) {
+            swap(arr[parent], arr[largest]);
+            heapify(largest);
         }
     }
 
@@ -70,18 +70,20 @@ public:
         cout << endl;
     }
 
-    ~MinHeap() {
+    // Destructor
+    ~MaxHeap() {
         delete[] arr;
     }
 };
 
 int main() {
-    MinHeap h1(20);
 
-    h1.insert(40);
+    MaxHeap h1(20);
+
     h1.insert(10);
-    h1.insert(30);
-    h1.insert(5);
+    h1.insert(40);
+    h1.insert(20);
+    h1.insert(50);
 
     h1.print();
 
@@ -101,32 +103,20 @@ int main() {
 // Parent = (i - 1)/2
 
 // Rule 3:
-// Min Heap Property:
-// Parent <= Children
-// (Smallest element always at root)
+// Insert = Add at end + Heapify Up.
 
 // Rule 4:
-// Insert = Add at end + Heapify Up.
-// Heapify Up Condition:
-// While(parent > current) → swap
+// Delete Root = Swap with last + Heapify Down.
 
 // Rule 5:
-// Delete Root = Swap with last + size-- + Heapify Down.
-
-// Rule 6:
-// Heapify Down Condition:
-// Compare both children.
-// Pick smallest.
-// If parent > smallest → swap and continue.
-
-// Rule 7:
 // Heap height = log n.
 
-// Time Complexity:
+// Time Complexity
 // Insert = O(log n)
-// Delete = O(log n)
 
-// If we insert n elements:
-// n × log n = O(n log n)
+// If we insert n elements: n x log n = O(n log n)
 
-// Building heap using repeated insert = O(n log n)
+// Building heap using insert = O(n log n)
+
+
+
