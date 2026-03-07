@@ -44,25 +44,3 @@ public:
     }
 };
 
-⚙️ Better (Efficient) Version using Memoization (Top-Down DP)
-
-class Solution {
-public:
-    int solve(int target, vector<int>& nums, vector<int>& dp) {
-        if(target == 0) return 1;         // one valid combination found
-        if(target < 0) return 0;          // invalid path
-        if(dp[target] != -1) return dp[target]; // already computed
-
-        int ways = 0;
-        for(int num : nums) {
-            ways += solve(target - num, nums, dp);
-        }
-
-        return dp[target] = ways;
-    }
-
-    int combinationSum4(vector<int>& nums, int target) {
-        vector<int> dp(target + 1, -1);
-        return solve(target, nums, dp);
-    }
-};
