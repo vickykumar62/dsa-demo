@@ -2,11 +2,11 @@
 // brute force recursion approach
 int countSubset(int index, int target, vector<int>& arr) {
 
-    // Base Case: found valid subset
-    if (target == 0) return 1;
-
-    // No elements left
-    if (index < 0) return 0;
+    if (index == 0) {
+    if (target == 0 && arr[0] == 0) return 2; // take or not take
+    if (target == 0 || arr[0] == target) return 1;
+    return 0;
+    }
 
     // Not take
     int notTake = countSubset(index - 1, target, arr);
@@ -24,8 +24,11 @@ int countSubset(int index, int target, vector<int>& arr) {
 // top down - momoziation
 int countSubset(int index, int target, vector<int>& arr, vector<vector<int>>& dp) {
 
-    if (target == 0) return 1;
-    if (index < 0) return 0;
+    if (index == 0) {
+    if (target == 0 && arr[0] == 0) return 2; // take or not take
+    if (target == 0 || arr[0] == target) return 1;
+    return 0;
+    }
 
     if (dp[index][target] != -1) return dp[index][target];
 
@@ -46,15 +49,18 @@ At each cell: ways = ways_without_current + ways_with_current
 int countSubset(vector<int>& arr, int n, int target) {
     vector<vector<int>> dp(n, vector<int>(target + 1, 0));
 
-    // Base Case: sum 0 → 1 way (empty subset)
-    for (int i = 0; i < n; i++) {
-        dp[i][0] = 1;
-    }
+    // Base Case (i = 0)
 
-    // First element
-    if (arr[0] <= target) {
+    // If first element is 0:
+    // We can either take it or not take it → both give sum = 0
+    if (arr[0] == 0)
+        dp[0][0] = 2;
+    else
+        dp[0][0] = 1;   // empty subset
+
+    // If first element is not 0 and can form its own value
+    if (arr[0] != 0 && arr[0] <= target)
         dp[0][arr[0]] = 1;
-    }
 
     // Fill table
     for (int i = 1; i < n; i++) {
