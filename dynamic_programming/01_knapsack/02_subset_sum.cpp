@@ -2,11 +2,14 @@
 
 bool subsetSum(int index, int target, vector<int>& arr) {
 
-    // Found subset
+        // If target becomes 0 → subset found
     if (target == 0) return true;
 
-    // No elements left
-    if (index < 0) return false;
+    // Base Case: only one element left
+    if (index == 0) {
+        return (arr[0] == target);
+    }
+
 
     bool notTake = subsetSum(index - 1, target, arr);
 
@@ -21,11 +24,12 @@ bool subsetSum(int index, int target, vector<int>& arr) {
 // memoization 
 bool subsetSum(int index, int target, vector<int>& arr, vector<vector<int>>& dp) {
 
-    // Base Case 1: subset found
     if (target == 0) return true;
 
-    //  Base Case 2: no elements left
-    if (index < 0) return false;
+    if (index == 0) {
+        return (arr[0] == target);
+    }
+
 
     //  Check DP (after base cases)
     if (dp[index][target] != -1) {
