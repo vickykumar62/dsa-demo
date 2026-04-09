@@ -1,54 +1,107 @@
-/* 1. Core Idea of LCS 
-Problem:
-Given two strings, find the length of the longest subsequence common in both.
-Subsequence ≠ substring
-You can skip characters, but order must remain. */
-
-/* Golden Intuition (remember this forever)
-
-“At every index, I have 2 choices:
-match → take it
-not match → try skipping from either string” */
-
+// recursion 
 class Solution {
 public:
-    int m , n;
 
-    int solve(string s1 , string s2 , int i , int j , vector<vector<int>> &dp){
+    int solve(string &s1, string &s2, int m, int n){
 
         // Base case:
-        // If we reach end of any string → no subsequence possible
-        if(i>=m || j>=n) return 0;
-
-        // Already computed → reuse (DP optimization)
-        if(dp[i][j] != -1) return dp[i][j];
+        // If any string becomes empty → no LCS
+        if(m == 0 || n == 0) return 0;
 
         // If characters match
-        // we take this character in LCS
-        // move both pointers forward
-        if(s1[i]==s2[j]) 
-            return dp[i][j] = 1 + solve(s1,s2,i+1,j+1,dp);
+        if(s1[m-1] == s2[n-1]){
+            // Take this character and move both back
+            return 1 + solve(s1, s2, m-1, n-1);
+        }
 
-        // If characters don't match
-        // we have 2 choices:
-        //    1. Skip s1[i]
-        //    2. Skip s2[j]
-        // take max of both possibilities
-        return dp[i][j] = max(
-            solve(s1,s2,i+1,j,dp),   // skip from s1
-            solve(s1,s2,i,j+1,dp)    // skip from s2
+        // If not match
+        // Try skipping from either string
+        return max(
+            solve(s1, s2, m-1, n),   // skip from s1
+            solve(s1, s2, m, n-1)    // skip from s2
+        );
+    }
+
+    int longestCommonSubsequence(string s1, string s2) {
+        return solve(s1, s2, s1.length(), s2.length());
+    }
+};
+
+/*  📘 LCS (Backward DP) — Revision Intuition
+🧠 State (START HERE ALWAYS)
+
+solve(m, n) = LCS of first m chars of s1 and first n chars of s2
+
+👉 I am standing at end of both strings
+
+🎯 Think Like This (VERY IMPORTANT)
+
+“I am comparing last characters of both strings”
+
+s1[m-1]  vs  s2[n-1]
+🔥 Case 1: Characters Match
+
+👉 Same character → must be part of LCS
+
+1 + solve(m-1, n-1)
+
+💡 Memory line:
+
+“Match → take it and move both back”
+
+❌ Case 2: Characters Don’t Match
+
+👉 One of them is useless → remove one
+
+max(
+    solve(m-1, n),   // remove from s1
+    solve(m, n-1)    // remove from s2
+)
+
+💡 Memory line:
+
+“Mismatch → try removing both one by one”
+
+🚫 Base Case
+if(m == 0 || n == 0) return 0;
+
+💡 Memory line:
+
+“If one string is empty → no common subsequence”  */
+
+// memoization
+class Solution {
+public:
+
+    int solve(string &s1, string &s2, int m, int n, vector<vector<int>> &dp){
+
+        // Base case
+        if(m == 0 || n == 0) return 0;
+
+        // Already computed
+        if(dp[m][n] != -1) return dp[m][n];
+
+        // Match
+        if(s1[m-1] == s2[n-1]){
+            return dp[m][n] = 1 + solve(s1, s2, m-1, n-1, dp);
+        }
+
+        // Not match
+        return dp[m][n] = max(
+            solve(s1, s2, m-1, n, dp),
+            solve(s1, s2, m, n-1, dp)
         );
     }
 
     int longestCommonSubsequence(string s1, string s2) {
 
-        m = s1.length();
-        n = s2.length();
+        int m = s1.length();
+        int n = s2.length();
 
-        // dp[i][j] = LCS from i → end and j → end
-        vector<vector<int>> dp(1001 ,vector<int>(1001,-1));
+        // dp[m][n] = LCS of first m and n characters
+        vector<vector<int>> dp(m+1, vector<int>(n+1, -1));
 
-        return solve(s1,s2,0,0,dp);
+        return solve(s1, s2, m, n, dp);
     }
 };
 
@@ -56,30 +109,30 @@ public:
 class Solution {
 public:
     int longestCommonSubsequence(string s1, string s2) {
-    
+        
         int m = s1.length();
         int n = s2.length();
 
-        // dp[i][j] = LCS length of first i chars of s1 and first j chars of s2
-        vector<vector<int>> dp(m+1,vector<int>(n+1, 0));
+        // dp[i][j] = LCS of first i chars of s1 and first j chars of s2
+        vector<vector<int>> dp(m+1, vector<int>(n+1, 0));
 
-        // Base case already handled:
+        // Base case:
         // dp[0][*] = 0 → empty string
         // dp[*][0] = 0
 
-        for(int i = 1 ; i <= m ; i++){
-            for(int j = 1 ; j <= n ; j++){
-                
-                // If characters match
-                if(s1[i-1]==s2[j-1]){
-                    // Take this char → extend previous LCS
+        for(int i = 1; i <= m; i++){
+            for(int j = 1; j <= n; j++){
+
+                // Compare last characters of current prefix
+                if(s1[i-1] == s2[j-1]){
+                    // Match → take it + move diagonal
                     dp[i][j] = 1 + dp[i-1][j-1];
                 }
                 else{
-                    // Skip one character from either string
+                    // Not match → remove one char
                     dp[i][j] = max(
-                        dp[i-1][j],   // skip from s1
-                        dp[i][j-1]    // skip from s2
+                        dp[i-1][j],   // remove from s1
+                        dp[i][j-1]    // remove from s2
                     );
                 }
             }
@@ -89,74 +142,60 @@ public:
     }
 };
 
-/*  Why are we using i-1, j-1 in tabulation?
+/* 🧠 Intuition (REVISION STYLE — 30 sec recall)
+🔑 Step 1: Meaning
 
-Let’s clear this intuitively (not formula).
+dp[i][j] = answer for first i and j characters
 
- 1. What does dp[i][j] actually mean?
+👉 I am solving prefix vs prefix
 
- In tabulation:
+🎯 Step 2: What am I doing?
 
-dp[i][j] = LCS of first i characters of s1 and first j characters of s2 
+“I am comparing last characters of both prefixes”
 
-2. Why do we look backward?
+s1[i-1] vs s2[j-1]
+🔥 Step 3: Decision
+✅ Match
 
-Because:
+Same character → must be part of LCS
 
-DP builds answers using smaller subproblems
+dp[i][j] = 1 + dp[i-1][j-1];
 
- Case 1: Characters match
-if(s1[i-1] == s2[j-1])
-    dp[i][j] = 1 + dp[i-1][j-1];
- Intuition:
-Current characters matched 
-So include them in LCS (+1)
-Now problem reduces to:
+💡 Memory:
 
- “What was LCS before these characters?”
+“Match → take + diagonal”
 
-That is:
+❌ Not Match
 
-s1[0 ... i-2]
-s2[0 ... j-2]
+One is useless → remove one
 
- Which is exactly dp[i-1][j-1]
-
- Think like this:
-
-“I matched current char, now I want best answer before this match”
-
- Case 2: Characters don’t match
 dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
- Intuition:
 
-Mismatch → we cannot take both
+💡 Memory:
 
-So we try:
+“Not match → remove one → take max”
 
-Skip current char of s1 → dp[i-1][j]
-Skip current char of s2 → dp[i][j-1]
- Think like this:
+🚫 Base Case
 
-“One of these characters is useless, let me try removing each one”  
+Empty string → LCS = 0
 
- Why opposite directions?
+⚡ FULL THINKING IN 3 LINES
 
-Because:
+Compare last characters
+Match → 1 + diagonal
+Not match → max(up, left)
 
-Approach	Direction
-Recursion	from start → end
-Tabulation	from small → build up
- 5. Golden Analogy
-
-Think like climbing stairs:
-
-Recursion: “Where can I go next?”
-DP: “How did I reach here?” 
-
-important ! 
-“We use i-1, j-1 because dp[i][j] represents LCS of prefixes, so we refer to previously solved smaller prefix problems.”
-One-Line Memory Trick
+🧠 Visualization Trick
+↖️ diagonal → match (take)
+⬆️ up       → remove from s1
+⬅️ left     → remove from s2
+🎯 ONE-LINE FINAL MEMORY
 
 “Match → diagonal + 1
-Not match → max(left, up)”   */
+Not match → max(up, left)”
+
+🔥 Interview Insight
+
+👉 Always say:
+
+“dp[i][j] depends on previously solved smaller prefix problems” */
